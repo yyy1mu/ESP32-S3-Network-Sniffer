@@ -7,32 +7,18 @@ QueueHandle_t global_hid_report_queue = NULL;
 // > Performance note: xTaskGetCurrentTaskHandle is less demanding than a new xSemaphoreCreateBinary. 
 TaskHandle_t hid_task_wait_somaphore = NULL;
 
-// Callback to release the HID task semaphore
-void hid_task_multiplexer_release_cb(void *arg){
-    xTaskNotifyGive(hid_task_wait_somaphore);
-}
-
 // Consumer task: send all reports from queue to USB PC
 void hid_task_multiplexer(void *pvParameters) {
   // Initialize the task semaphore
   hid_task_wait_somaphore = xTaskGetCurrentTaskHandle();
   // One notify to avoid blocking at first iteration
-  xTaskNotifyGive(hid_task_wait_somaphore); 
-
-  // Create a hardware timer to manage high precision lock
-  esp_timer_create_args_t timer_args = {
-    .callback = &hid_task_multiplexer_release_cb,
-    .name = "timer_hid_lock"
-  };
-  esp_timer_handle_t timer;
-  esp_timer_create(&timer_args, &timer);
+  xTaskNotifyGive(hid_task_wait_somaphore);
 
   // Consumer loop
   while (true) {
     hid_transmit_t queue_received;
     if (xQueueReceive(global_hid_report_queue, &queue_received, portMAX_DELAY) == pdTRUE) {
-      ulTaskNotifyTake(pdTRUE, portMAX_DELAY); // wait until timer release the lock
-      esp_timer_start_once(timer, 1000); // 1ms timeout to avoid blocking if USB is not ready
+      ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(1)); // wait 1ms to avoid blocking if USB is not ready
 
       // Display in console log
       #if DEBUG_LOG
@@ -42,7 +28,7 @@ void hid_task_multiplexer(void *pvParameters) {
         print_mouse_report(pcTaskGetName(NULL), queue_received.event.mouse);
       }
       #endif
-      
+
       // But USB peripheral must still be ready. If the USB device is disconnected, tud_ready() will return false.
       if (!tud_ready()) continue;
       // If the report is not sent, requeue-it.

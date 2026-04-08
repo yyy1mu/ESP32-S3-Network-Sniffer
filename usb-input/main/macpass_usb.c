@@ -9,9 +9,6 @@ static const char *hid_proto_name_str[] = {
 
 hid_host_device_handle_t usb_keyboard_handle = NULL;
 QueueHandle_t hid_event_queue = NULL;
-#if DEBUG_LOG
-int64_t report_time;
-#endif
 
 /**
  * @brief USB HID Host interface callback
@@ -39,11 +36,6 @@ void hid_host_interface_callback(hid_host_device_handle_t hid_device_handle, con
             if (HID_SUBCLASS_BOOT_INTERFACE == dev_params.sub_class) {
                 // Keyboard report
                 if (HID_PROTOCOL_KEYBOARD == dev_params.proto) {
-                    #if DEBUG_LOG
-                    if (keycode_contains_key(*((hid_keyboard_report_t*)data), HID_KEY_CAPS_LOCK)){
-                        report_time = esp_timer_get_time();
-                    }
-                    #endif
                     spi_send_master_hid_sender(HEADER_HID_KEYBOARD, (hid_report_t*)data);
                 // Mouse report
                 } else if (HID_PROTOCOL_MOUSE == dev_params.proto) {
@@ -137,9 +129,6 @@ void hid_host_device_callback(hid_host_device_handle_t hid_device_handle, const 
 
 void hid_host_keyboard_report_output(char report){
     if (usb_keyboard_handle != NULL) {
-        #if DEBUG_LOG
-        ESP_LOGI(pcTaskGetName(NULL), "CapsLock ping => %lld us", esp_timer_get_time()-report_time);
-        #endif
         esp_err_t ret = hid_class_request_set_report(usb_keyboard_handle, HID_REPORT_TYPE_OUTPUT, 0, (void*)&report, sizeof(char));
         assert(ret == ESP_OK);
     }

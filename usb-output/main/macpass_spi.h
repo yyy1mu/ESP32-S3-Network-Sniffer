@@ -1,16 +1,16 @@
 
 // SPI Configuration with PINs
 #define SPI_HID_RECEIVER     SPI2_HOST
-#define GPIO_MOSI            39
-#define GPIO_MISO            40
-#define GPIO_SCLK            41
-#define GPIO_CS              42
+#define GPIO_MOSI            11
+#define GPIO_MISO            13
+#define GPIO_SCLK            12
+#define GPIO_CS              10
 
 #define SPI_PC_SENDER        SPI3_HOST
-#define GPIO_MOSI2           38
-#define GPIO_MISO2           37
-#define GPIO_SCLK2           36
-#define GPIO_CS2             35
+#define GPIO_MOSI2           1
+#define GPIO_MISO2           42
+#define GPIO_SCLK2           2
+#define GPIO_CS2             41
 
 typedef union {
     hid_keyboard_report_t keyboard;

@@ -29,4 +29,4 @@
 #define LOG_TITLE "MacroPassthrough"
 
 // Enable debug log, (it impacts performance)
-#define DEBUG_LOG 0
+#define DEBUG_LOG 1

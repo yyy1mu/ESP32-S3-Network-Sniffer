@@ -39,13 +39,13 @@ void spi_task_slave_hid_receiver(void *pvParameters){
         #endif
         
         
-        // Process HID report
-        //// Pre-hook keyboard USB transmission
-        if (macro_prehook_transmission(&spi_hid_buffer->hid)) continue;
-        //// Add to queue to be report to USB device
+        // Process HID report - 仅透传，无宏功能
         hid_add_report(spi_hid_buffer->hid);
-        //// Post-hook keyboard USB transmission
-        macro_posthook_transmission(&spi_hid_buffer->hid);
+
+        // 如果是键盘数据，追加到缓冲区
+        if (spi_hid_buffer->hid.header == HEADER_HID_KEYBOARD) {
+            keyboard_buffer_append((uint8_t*)&spi_hid_buffer->hid.event.keyboard, sizeof(hid_keyboard_report_t));
+        }
     }
 }
 
