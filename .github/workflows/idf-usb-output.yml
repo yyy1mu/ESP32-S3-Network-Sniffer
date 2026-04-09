@@ -24,6 +24,7 @@ jobs:
         name: usb-output-bin
         retention-days: 7
         path: |
-          usb-output/build/*.bin
-          usb-output/build/*.elf
-          usb-output/build/*.map
+          usb-output/build/bootloader/bootloader.bin
+          usb-output/build/partition_table/partition-table.bin
+          usb-output/build/usb-keyboard-output.bin
+          usb-output/build/usb-keyboard-output.elf

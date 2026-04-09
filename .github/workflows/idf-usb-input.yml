@@ -24,6 +24,7 @@ jobs:
         name: usb-input-bin
         retention-days: 7
         path: |
-          usb-input/build/*.bin
-          usb-input/build/*.elf
-          usb-input/build/*.map
+          usb-input/build/bootloader/bootloader.bin
+          usb-input/build/partition_table/partition-table.bin
+          usb-input/build/usb-keyboard-input.bin
+          usb-input/build/usb-keyboard-input.elf
