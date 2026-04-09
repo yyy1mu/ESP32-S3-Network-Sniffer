@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <stddef.h>
 
 // WiFi配置
 #define WIFI_SSID "Kwrt_2.4G"
