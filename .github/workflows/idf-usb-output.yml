@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repo
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         submodules: 'recursive'
     - name: esp-idf build
@@ -18,3 +18,12 @@ jobs:
         esp_idf_version: v5.5.4
         target: esp32s3
         path: 'usb-output'
+    - name: Upload firmware artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: usb-output-bin
+        retention-days: 7
+        path: |
+          usb-output/build/*.bin
+          usb-output/build/*.elf
+          usb-output/build/*.map
